@@ -1,0 +1,34 @@
+{
+  "name": "vuemix",
+  "version": "0.1.0",
+  "description": "A simple remix-like framework for Vue 3",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brophdawg11/vuemix.git"
+  },
+  "keywords": [
+    "remix",
+    "vue"
+  ],
+  "author": "matt@brophy.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brophdawg11/vuemix/issues"
+  },
+  "homepage": "https://github.com/brophdawg11/vuemix#readme",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "devDependencies": {
+    "esbuild": "0.14.11",
+    "esbuild-plugin-vue-next": "0.1.2",
+    "prettier": "2.5.1",
+    "typescript": "4.5.4"
+  },
+  "dependencies": {
+    "express": "4.17.2",
+    "vue": "3.2.26",
+    "vue-router": "4.0.12"
+  }
+}
