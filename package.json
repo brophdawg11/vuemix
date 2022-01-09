@@ -18,15 +18,20 @@
   },
   "homepage": "https://github.com/brophdawg11/vuemix#readme",
   "scripts": {
-    "test": "npm run test"
+    "build:server": "node vuemix/build.mjs",
+    "build": "concurrently npm:build:*",
+    "clean": "rm -rf dist/",
+    "start": "node app/server.mjs",
+    "start:debug": "node --inspect-brk app/server.mjs"
   },
   "devDependencies": {
+    "concurrently": "7.0.0",
     "esbuild": "0.14.11",
     "esbuild-plugin-vue-next": "0.1.2",
-    "prettier": "2.5.1",
-    "typescript": "4.5.4"
+    "prettier": "2.5.1"
   },
   "dependencies": {
+    "@vue/server-renderer": "3.2.26",
     "express": "4.17.2",
     "vue": "3.2.26",
     "vue-router": "4.0.12"
