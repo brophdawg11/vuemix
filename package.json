@@ -22,13 +22,23 @@
     "build:server": "node vuemix/build-server.mjs",
     "build": "concurrently npm:build:*",
     "clean": "rm -rf dist/",
-    "start": "node app/server.mjs",
-    "start:debug": "node --inspect-brk app/server.mjs"
+    "dev": "npm run clean && npm run build",
+    "start": "node server/server.mjs",
+    "start:debug": "node --inspect-brk app/server.mjs",
+    "watch": "npx npm-watch"
+  },
+  "watch": {
+    "dev": "app/**/*.m?js",
+    "start": [
+      "server/**.m?js",
+      "dist/server"
+    ]
   },
   "devDependencies": {
     "concurrently": "7.0.0",
     "esbuild": "0.14.11",
     "esbuild-plugin-vue-next": "0.1.2",
+    "npm-watch": "0.11.0",
     "prettier": "2.5.1"
   },
   "dependencies": {

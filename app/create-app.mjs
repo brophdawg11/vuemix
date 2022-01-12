@@ -1,13 +1,12 @@
 import { h } from 'vue';
 import { createRouter } from 'vue-router';
 
-import IndexView from './routes/index.vue';
 import RootView from './root.vue';
 
 const routes = [
   {
     path: '/',
-    component: IndexView,
+    component: async () => (await import('./routes/index.vue')).default,
   },
 ];
 

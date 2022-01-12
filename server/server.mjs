@@ -24,7 +24,8 @@ server.use('*', async (req, res, next) => {
    </head>
    <body>
        <div id="app">${html}</div>
-       <script src="app.js"></script>
+       <link rel="modulepreload" href="routes/index.js" />
+       <script src="entry-client.js" type="module"></script>
    </body>
 </html>`;
     res.setHeader('Content-Type', 'text/html');
