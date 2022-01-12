@@ -3,7 +3,7 @@ import path from 'path';
 import { build } from 'esbuild';
 import pluginVue from 'esbuild-plugin-vue-next';
 
-build({
+await build({
   entryPoints: ['app/entry-server.mjs'],
   bundle: true,
   define: {

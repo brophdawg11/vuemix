@@ -1,10 +1,14 @@
 import fs from 'fs';
+import { URL } from 'url';
 
 import express from 'express';
 
 import { serverCreateApp, renderApp } from '../dist/server/app.mjs';
 
 const server = express();
+
+const dirname = new URL('.', import.meta.url).pathname;
+server.get(/\.(css|js)$/, express.static(`${dirname}../dist/client`));
 
 server.use('*', async (req, res, next) => {
   try {
@@ -13,8 +17,18 @@ server.use('*', async (req, res, next) => {
     };
     const { app } = await serverCreateApp(context);
     const html = await renderApp(app, context);
+    const page = `<!DOCTYPE html>
+<html>
+   <head>
+       <title>Vuemix</title>
+   </head>
+   <body>
+       <div id="app">${html}</div>
+       <script src="app.js"></script>
+   </body>
+</html>`;
     res.setHeader('Content-Type', 'text/html');
-    res.send(html);
+    res.send(page);
   } catch (e) {
     next(e);
   }

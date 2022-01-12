@@ -1,10 +1,11 @@
 import { renderToString } from '@vue/server-renderer';
+import { createSSRApp } from 'vue';
 import { createMemoryHistory } from 'vue-router';
 
 import createVuemixApp from './create-app.mjs';
 
 export async function serverCreateApp(context) {
-  const { app, router } = createVuemixApp(createMemoryHistory());
+  const { app, router } = createVuemixApp(createSSRApp, createMemoryHistory());
   await router.push(context.url);
   await router.isReady();
   return { app, router };

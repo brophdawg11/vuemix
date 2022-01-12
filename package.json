@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/brophdawg11/vuemix#readme",
   "scripts": {
-    "build:server": "node vuemix/build.mjs",
+    "build:client": "node vuemix/build-client.mjs",
+    "build:server": "node vuemix/build-server.mjs",
     "build": "concurrently npm:build:*",
     "clean": "rm -rf dist/",
     "start": "node app/server.mjs",

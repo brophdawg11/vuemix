@@ -1,4 +1,4 @@
-import { createSSRApp, h } from 'vue';
+import { h } from 'vue';
 import { createRouter } from 'vue-router';
 
 import IndexView from './routes/index.vue';
@@ -11,8 +11,8 @@ const routes = [
   },
 ];
 
-export default function createVuemixApp(history) {
-  const app = createSSRApp({
+export default function createVuemixApp(createApp, history) {
+  const app = createApp({
     render: () => h(RootView),
   });
 
