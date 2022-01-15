@@ -35,11 +35,10 @@ function getPathFromFileName(file) {
 }
 
 // Provide a virtual module to import vue-router routes from 'vuemix:route-definition'
-export function routeDefinitionPlugin() {
+export function routeDefinitionPlugin({ type }) {
   return {
     name: 'route-definition',
     setup(build) {
-      // Resolve ".wasm" files to a path with a namespace
       build.onResolve({ filter: /^vuemix:route-definition$/ }, async (args) => {
         return {
           path: args.path,
@@ -56,10 +55,33 @@ export default [
   ${files.map(
     (f) => `{
     path: '${getPathFromFileName(f)}',
-    component: async () => (await import('./${f}')).default,
+    component: async () => (await import('./${f}?${type}')).default,
   }`
   )}
 ];
+`;
+          return {
+            resolveDir: routeDir,
+            contents,
+            loader: 'js',
+          };
+        }
+      );
+
+      build.onResolve({ filter: /\.vue\?client$/ }, async (args) => {
+        return {
+          path: args.path,
+          namespace: 'route-client-stub',
+        };
+      });
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'route-client-stub' },
+        async (args) => {
+          const files = await readRoutesDirectory();
+          const contents = `
+import component from '${args.path.replace('?client', '')}';
+export default component;
 `;
           return {
             resolveDir: routeDir,

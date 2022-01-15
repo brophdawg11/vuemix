@@ -9,6 +9,11 @@
 <script>
 import { onMounted, ref } from 'vue';
 
+export async function loader() {
+  await new Promise((r) => setTimeout(r, 1000));
+  console.log('Returning loader data');
+  return { count: 1 };
+}
 
 export default {
   setup() {

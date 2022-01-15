@@ -16,7 +16,7 @@ const result = await build({
   target: 'node16',
   format: 'esm',
   outfile: 'dist/server/app.mjs',
-  plugins: [routeDefinitionPlugin(), pluginVue()],
+  plugins: [routeDefinitionPlugin({ type: 'server' }), pluginVue()],
 });
 
 fs.writeFileSync(

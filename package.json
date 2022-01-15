@@ -28,9 +28,12 @@
     "watch": "npx npm-watch"
   },
   "watch": {
-    "dev": "app/**/*.m?js",
+    "dev": [
+      "app",
+      "vuemix"
+    ],
     "start": [
-      "server/**",
+      "server",
       "dist/server"
     ]
   },
