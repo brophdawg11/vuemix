@@ -4,6 +4,8 @@ import path from 'path';
 import { build } from 'esbuild';
 import pluginVue from 'esbuild-plugin-vue-next';
 
+import { routeDefinitionPlugin } from './route-plugins.mjs';
+
 const result = await build({
   entryPoints: ['app/entry-client.mjs', 'app/routes/index.vue'],
   bundle: true,
@@ -16,7 +18,7 @@ const result = await build({
   splitting: true,
   target: 'es2020',
   outdir: 'dist/client',
-  plugins: [pluginVue()],
+  plugins: [routeDefinitionPlugin(), pluginVue()],
 });
 
 fs.writeFileSync(

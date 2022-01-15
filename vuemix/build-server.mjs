@@ -3,6 +3,8 @@ import fs from 'fs';
 import { build } from 'esbuild';
 import pluginVue from 'esbuild-plugin-vue-next';
 
+import { routeDefinitionPlugin } from './route-plugins.mjs';
+
 const result = await build({
   entryPoints: ['app/entry-server.mjs'],
   bundle: true,
@@ -14,7 +16,7 @@ const result = await build({
   target: 'node16',
   format: 'esm',
   outfile: 'dist/server/app.mjs',
-  plugins: [pluginVue()],
+  plugins: [routeDefinitionPlugin(), pluginVue()],
 });
 
 fs.writeFileSync(

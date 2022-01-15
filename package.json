@@ -30,7 +30,7 @@
   "watch": {
     "dev": "app/**/*.m?js",
     "start": [
-      "server/**.m?js",
+      "server/**",
       "dist/server"
     ]
   },

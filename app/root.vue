@@ -1,6 +1,11 @@
 <template>
   <div>
-    <header>Header</header>
+    <header>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/page">Page</router-link> |
+      <router-link to="/nested">Nested Index</router-link> |
+      <router-link to="/nested/page">Nested Page</router-link>
+    </header>
     <router-view />
     <footer>Footer</footer>
   </div>

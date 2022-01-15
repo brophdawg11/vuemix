@@ -10,7 +10,7 @@ const server = express();
 const dirname = new URL('.', import.meta.url).pathname;
 server.get(/\.(css|js)$/, express.static(`${dirname}../dist/client`));
 
-server.use('*', async (req, res, next) => {
+server.all('*', async (req, res, next) => {
   try {
     const context = {
       url: req.url,
@@ -24,8 +24,7 @@ server.use('*', async (req, res, next) => {
    </head>
    <body>
        <div id="app">${html}</div>
-       <link rel="modulepreload" href="routes/index.js" />
-       <script src="entry-client.js" type="module"></script>
+       <script src="/entry-client.js" type="module"></script>
    </body>
 </html>`;
     res.setHeader('Content-Type', 'text/html');
