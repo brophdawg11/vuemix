@@ -6,7 +6,7 @@
       <router-link to="/nested">Nested Index</router-link> |
       <router-link to="/nested/page">Nested Page</router-link>
     </header>
-    <router-view />
+    <router-view :key="$route.path" />
     <footer>Footer</footer>
   </div>
 </template>
