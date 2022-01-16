@@ -1,5 +1,5 @@
 <template>
-  <h1>Hello {{ name }}</h1>
+  <h1>Hello Vuemix</h1>
   <p :style="{ color: isMounted ? 'red' : 'black' }">
     {{ isMounted ? 'Mounted!' : 'Mounting...' }}
   </p>
@@ -7,21 +7,29 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
+
+import { useLoaderData } from '../../vuemix/index.mjs';
 
 export async function loader() {
   await new Promise((r) => setTimeout(r, 1000));
-  console.log('Returning loader data');
   return { count: 1 };
 }
 
 export default {
+  name: 'IndexView',
   setup() {
-    const count = ref(0);
-    const name = ref('Vuemix');
+    const loaderData = useLoaderData();
+
+    const count = ref(loaderData?.count);
+
     const isMounted = ref(false);
     onMounted(() => (isMounted.value = true));
-    return { count, isMounted, name };
+
+    return {
+      count,
+      isMounted,
+    };
   },
 };
 </script>

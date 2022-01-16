@@ -1,13 +1,16 @@
-import { h } from 'vue';
+import { h, provide } from 'vue';
 import { createRouter } from 'vue-router';
 
 import routes from 'vuemix:route-definition';
 
 import RootView from './root.vue';
 
-export default function createVuemixApp(createApp, history) {
+export default function createVuemixApp(createApp, history, vuemixCtx) {
   const app = createApp({
-    render: () => h(RootView),
+    setup() {
+      provide('vuemixCtx', vuemixCtx);
+      return () => h(RootView);
+    },
   });
 
   const router = createRouter({ history, routes });

@@ -52,12 +52,20 @@ export function routeDefinitionPlugin({ type }) {
           const files = await readRoutesDirectory();
           const getImport = (f) => f + (type === 'client' ? '?client' : '');
           const contents = `
+import { h } from 'vue';
+
+import { VuemixRoute } from '../../vuemix/index.mjs';
+
 export default [
   ${files.map(
     (f) => `{
-    path: '${getPathFromFileName(f)}',
-    component: async () => (await import('./${getImport(f)}')).default,
-  }`
+      id: '${f}',
+      path: '${getPathFromFileName(f)}',
+      component: async () => {
+        const cmp = (await import('./${getImport(f)}')).default;
+        return () => h(VuemixRoute, { id: '${f}' }, () => h(cmp));
+      },
+    }`
   )}
 ];
 `;
@@ -94,8 +102,7 @@ export default {
     )
     .join(',\n  ')}
 };
-          `;
-          console.log('server manifest contents\n', contents);
+`;
           return {
             resolveDir: routeDir,
             contents,

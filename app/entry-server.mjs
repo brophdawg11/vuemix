@@ -9,7 +9,9 @@ import createVuemixApp from './create-app.mjs';
 export const routeManifest = routes;
 
 export async function serverCreateApp(context) {
-  const { app, router } = createVuemixApp(createSSRApp, createMemoryHistory());
+  const { app, router } = createVuemixApp(createSSRApp, createMemoryHistory(), {
+    loaderData: context.loaderData,
+  });
   await router.push(context.url);
   await router.isReady();
   return { app, router };

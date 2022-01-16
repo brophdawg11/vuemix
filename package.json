@@ -29,12 +29,12 @@
   },
   "watch": {
     "dev": [
-      "app",
-      "vuemix"
+      "app/**/*",
+      "vuemix/**/*"
     ],
     "start": [
-      "server",
-      "dist/server"
+      "server/**/*",
+      "dist/server/**/*"
     ]
   },
   "devDependencies": {
