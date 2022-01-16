@@ -65,7 +65,7 @@ export default [
         const cmp = (await import('./${getImport(f)}')).default;
         return () => h(VuemixRoute, { id: '${f}' }, () => h(cmp));
       },
-    }`
+    }`,
   )}
 ];
 `;
@@ -74,7 +74,7 @@ export default [
             contents,
             loader: 'js',
           };
-        }
+        },
       );
 
       build.onResolve({ filter: /^vuemix:route-manifest$/ }, async (args) => {
@@ -98,7 +98,7 @@ export default {
     id: '${f}',
     path: '${getPathFromFileName(f)}',
     loader: typeof m_${i}.loader === 'undefined' ? null : m_${i}.loader,
-  }`
+  }`,
     )
     .join(',\n  ')}
 };
@@ -108,7 +108,7 @@ export default {
             contents,
             loader: 'js',
           };
-        }
+        },
       );
 
       build.onResolve({ filter: /\.vue\?client$/ }, async (args) => {
@@ -131,7 +131,7 @@ export default component;
             contents,
             loader: 'js',
           };
-        }
+        },
       );
     },
   };

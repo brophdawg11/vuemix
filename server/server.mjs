@@ -25,12 +25,12 @@ const clientRouteManifest = Object.entries(routeManifest).reduce(
         hasLoader: typeof v.loader === 'function',
       },
     }),
-  {}
+  {},
 );
 server.all('*', async (req, res, next) => {
   try {
     const activeRoute = Object.values(routeManifest).find(
-      (r) => r.path === req.path
+      (r) => r.path === req.path,
     );
     if (!activeRoute) {
       throw new Error(`Not Found: ${req.url}`);
@@ -64,10 +64,10 @@ server.all('*', async (req, res, next) => {
        <script>
        window.__vuemix = {
         routeManifest: JSON.parse(${JSON.stringify(
-          JSON.stringify(clientRouteManifest)
+          JSON.stringify(clientRouteManifest),
         )}),
         loaderData: JSON.parse(${JSON.stringify(
-          JSON.stringify(context.loaderData)
+          JSON.stringify(context.loaderData),
         )})
        };
        </script>

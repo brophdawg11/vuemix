@@ -24,17 +24,17 @@
     "clean": "rm -rf dist/",
     "dev": "npm run clean && npm run build",
     "start": "node server/server.mjs",
-    "start:debug": "node --inspect-brk app/server.mjs",
+    "start:debug": "node --inspect-brk server/server.mjs",
     "watch": "npx npm-watch"
   },
   "watch": {
     "dev": [
-      "app/**/*",
-      "vuemix/**/*"
+      "app/**/*.*",
+      "vuemix/**/*.*"
     ],
     "start": [
-      "server/**/*",
-      "dist/server/**/*"
+      "server/**/*.*",
+      "dist/server/**/*.*"
     ]
   },
   "devDependencies": {

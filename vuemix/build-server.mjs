@@ -21,5 +21,5 @@ const result = await build({
 
 fs.writeFileSync(
   './dist/server/meta.json',
-  JSON.stringify(result.metafile, null, 4)
+  JSON.stringify(result.metafile, null, 4),
 );
