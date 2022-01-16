@@ -10,4 +10,4 @@ A simple POC of a remix-like framework for Vue 3
 > npm run start
 ```
 
-This will build the server/client apps with `esbuild` and launch an Express server at http://localhost:8080 which demonstrates a few routes and loaders/actions.
+This will build the server/client apps with [`esbuild`](https://esbuild.github.io/) and launch an [`express`](https://expressjs.com/) server at http://localhost:8080 which demonstrates a few routes and loaders/actions.
