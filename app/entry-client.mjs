@@ -8,4 +8,4 @@ const { app, router } = createVuemixApp(createApp, createWebHistory());
 window.__vuemix.app = app;
 window.__vuemix.router = router;
 
-app.mount('#app');
+router.isReady().then(() => app.mount('#app'));
