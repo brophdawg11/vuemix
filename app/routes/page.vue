@@ -7,7 +7,7 @@
 import { useLoaderData } from '../../vuemix/index.mjs';
 
 export async function loader() {
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 200));
   return { count: Math.round(Math.random() * 1000) };
 }
 

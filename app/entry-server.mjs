@@ -10,6 +10,7 @@ export const routeManifest = routes;
 
 export async function serverCreateApp(context) {
   const { app, router } = createVuemixApp(createSSRApp, createMemoryHistory(), {
+    actionData: context.actionData,
     loaderData: context.loaderData,
   });
   await router.push(context.url);

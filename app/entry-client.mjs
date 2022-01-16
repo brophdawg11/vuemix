@@ -4,6 +4,7 @@ import { createWebHistory } from 'vue-router';
 import createVuemixApp from './create-app.mjs';
 
 const vuemixCtx = reactive({
+  actionData: window.__vuemix.actionData,
   loaderData: window.__vuemix.loaderData,
 });
 
@@ -15,6 +16,7 @@ const { app, router } = createVuemixApp(
 
 window.__vuemix.app = app;
 window.__vuemix.router = router;
+window.__vuemix.ctx = vuemixCtx;
 
 router.isReady().then(() => {
   router.beforeResolve(async (to, from, next) => {

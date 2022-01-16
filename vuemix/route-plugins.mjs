@@ -63,7 +63,10 @@ export default [
       path: '${getPathFromFileName(f)}',
       component: async () => {
         const cmp = (await import('./${getImport(f)}')).default;
-        return () => h(VuemixRoute, { id: '${f}' }, () => h(cmp));
+        return {
+          name: 'RouteWrapper',
+          render: () => h(VuemixRoute, { id: '${f}' }, () => h(cmp)),
+        };
       },
     }`,
   )}
@@ -97,6 +100,7 @@ export default {
       (f, i) => `'${f}': {
     id: '${f}',
     path: '${getPathFromFileName(f)}',
+    action: typeof m_${i}.action === 'undefined' ? null : m_${i}.action,
     loader: typeof m_${i}.loader === 'undefined' ? null : m_${i}.loader,
   }`,
     )
