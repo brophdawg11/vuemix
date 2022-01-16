@@ -50,16 +50,52 @@ export function routeDefinitionPlugin({ type }) {
         { filter: /.*/, namespace: 'route-definition' },
         async (args) => {
           const files = await readRoutesDirectory();
+          const getImport = (f) => f + (type === 'client' ? '?client' : '');
           const contents = `
 export default [
   ${files.map(
     (f) => `{
     path: '${getPathFromFileName(f)}',
-    component: async () => (await import('./${f}?${type}')).default,
+    component: async () => (await import('./${getImport(f)}')).default,
   }`
   )}
 ];
 `;
+          return {
+            resolveDir: routeDir,
+            contents,
+            loader: 'js',
+          };
+        }
+      );
+
+      build.onResolve({ filter: /^vuemix:route-manifest$/ }, async (args) => {
+        return {
+          path: args.path,
+          namespace: 'route-manifest',
+        };
+      });
+
+      build.onLoad(
+        { filter: /.*/, namespace: 'route-manifest' },
+        async (args) => {
+          const files = await readRoutesDirectory();
+          const contents = `
+${files.map((f, i) => `import * as m_${i} from './${f}';`).join('\n')}
+
+export default {
+  ${files
+    .map(
+      (f, i) => `'${f}': {
+    id: '${f}',
+    path: '${getPathFromFileName(f)}',
+    loader: typeof m_${i}.loader === 'undefined' ? null : m_${i}.loader,
+  }`
+    )
+    .join(',\n  ')}
+};
+          `;
+          console.log('server manifest contents\n', contents);
           return {
             resolveDir: routeDir,
             contents,
