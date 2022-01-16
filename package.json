@@ -23,9 +23,11 @@
     "build": "concurrently npm:build:*",
     "clean": "rm -rf dist/",
     "dev": "npm run clean && npm run build",
+    "lint": "eslint --ext .js,.mjs,.vue .",
     "start": "node server/server.mjs",
     "start:debug": "node --inspect-brk server/server.mjs",
-    "watch": "npx npm-watch"
+    "watch": "npx npm-watch",
+    "prepare": "husky install"
   },
   "watch": {
     "dev": [
@@ -41,6 +43,11 @@
     "concurrently": "7.0.0",
     "esbuild": "0.14.11",
     "esbuild-plugin-vue-next": "0.1.2",
+    "eslint": "8.7.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-vue": "8.3.0",
+    "husky": "7.0.4",
     "npm-watch": "0.11.0",
     "prettier": "2.5.1"
   },

@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { URL } from 'url';
 
 import express from 'express';
@@ -103,5 +102,6 @@ server.all('*', async (req, res, next) => {
 });
 
 server.listen(8080, () => {
+  // eslint-disable-next-line no-console
   console.info('Server listening at http://localhost:8080');
 });

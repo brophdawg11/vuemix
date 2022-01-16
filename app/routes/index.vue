@@ -23,13 +23,21 @@ import {
 } from '../../vuemix/index.mjs';
 
 export async function loader() {
-  await new Promise((r) => setTimeout(r, 200));
-  return { count: 10 };
+  await new Promise((r) => {
+    setTimeout(r, 200);
+  });
+  return {
+    count: 10,
+  };
 }
 
 export async function action({ formData }) {
-  await new Promise((r) => setTimeout(r, 200));
-  return { text: formData.text + '1' };
+  await new Promise((r) => {
+    setTimeout(r, 200);
+  });
+  return {
+    text: `${formData.text}-appended`,
+  };
 }
 
 export default {
@@ -43,9 +51,11 @@ export default {
     const text = computed(() => actionData.value?.text);
 
     const isMounted = ref(false);
-    onMounted(() => (isMounted.value = true));
+    onMounted(() => {
+      isMounted.value = true;
+    });
 
-    async function onSubmit(e) {
+    async function onSubmit() {
       const formData = new FormData(document.getElementsByTagName('form')[0]);
       const res = await fetch(`${window.location.pathname}?_action=xxx`, {
         method: 'post',

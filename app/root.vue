@@ -13,6 +13,6 @@
 
 <script>
 export default {
-  name: 'Root',
+  name: 'AppRoot',
 };
 </script>

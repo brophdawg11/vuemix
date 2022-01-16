@@ -2,6 +2,7 @@ import { renderToString } from '@vue/server-renderer';
 import { createSSRApp } from 'vue';
 import { createMemoryHistory } from 'vue-router';
 
+// eslint-disable-next-line import/no-unresolved
 import routes from 'vuemix:route-manifest';
 
 import createVuemixApp from './create-app.mjs';

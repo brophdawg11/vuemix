@@ -1,21 +1,25 @@
 import path from 'path';
-import fs, { statSync } from 'fs';
+import fs from 'fs';
 
 const dirname = new URL('.', import.meta.url).pathname;
 const routeDir = path.join(dirname, '../app/routes');
 
 // Recursivly read the routes/ directory and generate a flat array of files
 async function readRoutesDirectory(dir) {
-  let files = [];
+  const files = [];
   const rootDir = dir ? path.join(routeDir, dir) : routeDir;
   const dirContents = await fs.promises.readdir(rootDir);
   for (let i = 0; i < dirContents.length; i++) {
     const entryPath = path.join(rootDir, dirContents[i]);
+    // TODO: Optimize
+    // eslint-disable-next-line no-await-in-loop
     const stats = await fs.promises.stat(entryPath);
     const relativePath = dir ? path.join(dir, dirContents[i]) : dirContents[i];
     if (!stats.isDirectory()) {
       files.push(relativePath);
     } else {
+      // TODO: Optimize
+      // eslint-disable-next-line no-await-in-loop
       const nested = await readRoutesDirectory(relativePath);
       files.push(...nested);
     }
@@ -39,16 +43,17 @@ export function routeDefinitionPlugin({ type }) {
   return {
     name: 'route-definition',
     setup(build) {
-      build.onResolve({ filter: /^vuemix:route-definition$/ }, async (args) => {
-        return {
+      build.onResolve(
+        { filter: /^vuemix:route-definition$/ },
+        async (args) => ({
           path: args.path,
           namespace: 'route-definition',
-        };
-      });
+        }),
+      );
 
       build.onLoad(
         { filter: /.*/, namespace: 'route-definition' },
-        async (args) => {
+        async () => {
           const files = await readRoutesDirectory();
           const getImport = (f) => f + (type === 'client' ? '?client' : '');
           const contents = `
@@ -80,18 +85,14 @@ export default [
         },
       );
 
-      build.onResolve({ filter: /^vuemix:route-manifest$/ }, async (args) => {
-        return {
-          path: args.path,
-          namespace: 'route-manifest',
-        };
-      });
+      build.onResolve({ filter: /^vuemix:route-manifest$/ }, async (args) => ({
+        path: args.path,
+        namespace: 'route-manifest',
+      }));
 
-      build.onLoad(
-        { filter: /.*/, namespace: 'route-manifest' },
-        async (args) => {
-          const files = await readRoutesDirectory();
-          const contents = `
+      build.onLoad({ filter: /.*/, namespace: 'route-manifest' }, async () => {
+        const files = await readRoutesDirectory();
+        const contents = `
 ${files.map((f, i) => `import * as m_${i} from './${f}';`).join('\n')}
 
 export default {
@@ -107,25 +108,21 @@ export default {
     .join(',\n  ')}
 };
 `;
-          return {
-            resolveDir: routeDir,
-            contents,
-            loader: 'js',
-          };
-        },
-      );
-
-      build.onResolve({ filter: /\.vue\?client$/ }, async (args) => {
         return {
-          path: args.path,
-          namespace: 'route-client-stub',
+          resolveDir: routeDir,
+          contents,
+          loader: 'js',
         };
       });
+
+      build.onResolve({ filter: /\.vue\?client$/ }, async (args) => ({
+        path: args.path,
+        namespace: 'route-client-stub',
+      }));
 
       build.onLoad(
         { filter: /.*/, namespace: 'route-client-stub' },
         async (args) => {
-          const files = await readRoutesDirectory();
           const contents = `
 import component from '${args.path.replace('?client', '')}';
 export default component;

@@ -1,6 +1,7 @@
 import { h, provide } from 'vue';
 import { createRouter } from 'vue-router';
 
+// eslint-disable-next-line import/no-unresolved
 import routes from 'vuemix:route-definition';
 
 import RootView from './root.vue';
