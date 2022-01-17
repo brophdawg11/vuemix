@@ -45,26 +45,19 @@ server.all('*', async (req, res, next) => {
       loaderData: {},
     };
 
+    // TODO: Any need to support beyond this?
     if (!['GET', 'POST'].includes(req.method)) {
       res.status(405).send('Unsupported method');
       return;
     }
 
-    // Run appropriate loader/action methods and return JSON responses if
-    // these were fetch requests
-    if (req.method === 'GET') {
-      context.loaderData[activeRoute.id] = await (activeRoute.loader
-        ? activeRoute.loader()
-        : Promise.resolve(null));
-      if (req.query._data) {
-        res.send(context.loaderData[activeRoute.id]);
-        return;
-      }
-    } else {
+    // Handle action
+    if (req.method === 'POST') {
       if (!activeRoute.action) {
         res.status(500).send('No action provided');
         return;
       }
+
       context.actionData = await activeRoute.action({ formData: req.body });
       if (req.query._action) {
         res.send(context.actionData);
@@ -72,7 +65,17 @@ server.all('*', async (req, res, next) => {
       }
     }
 
-    // Not fetch requests - perform full SSR
+    // Handle loaders
+    context.loaderData[activeRoute.id] = await (activeRoute.loader
+      ? activeRoute.loader()
+      : Promise.resolve(null));
+
+    if (req.query._data) {
+      res.send(context.loaderData[activeRoute.id]);
+      return;
+    }
+
+    // At this point we know this wasn't a JS-driven request - this is a full SSR
     const { app } = await serverCreateApp(context);
     const html = await renderApp(app, context);
     const hydrateObj = (v) =>
@@ -89,10 +92,10 @@ server.all('*', async (req, res, next) => {
         routeManifest: ${hydrateObj(clientRouteManifest)},
         actionData: ${hydrateObj(context.actionData)},
         loaderData: ${hydrateObj(context.loaderData)}
-       };
+      };
        </script>
        <script src="/entry-client.js" type="module"></script>
-   </body>
+       </body>
 </html>`;
     res.setHeader('Content-Type', 'text/html');
     res.send(page);

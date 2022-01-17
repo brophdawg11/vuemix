@@ -22,6 +22,41 @@ export const VuemixRoute = {
   },
 };
 
+export const VuemixForm = {
+  name: 'VuemixForm',
+  props: {
+    reloadDocument: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  setup(props, { attrs, slots }) {
+    const vuemixCtx = useVuemixCtx();
+
+    const onSubmit = async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(document.getElementsByTagName('form')[0]);
+      const url = attrs.action || window.location.pathname;
+      const res = await fetch(`${url}?_action`, {
+        method: 'post',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(formData),
+      });
+      const data = await res.json();
+      vuemixCtx.actionData = data;
+    };
+
+    const formProps = {
+      ...attrs,
+      ...(!props.reloadDocument ? { onSubmit } : {}),
+    };
+    return () => h('form', formProps, slots.default());
+  },
+};
+
 export function useVuemixCtx() {
   return inject('vuemixCtx');
 }

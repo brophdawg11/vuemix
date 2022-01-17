@@ -4,13 +4,13 @@
     {{ isMounted ? 'Mounted!' : 'Mounting...' }}
   </p>
   <button @click="count++">Increment {{ count }}</button>
-  <form method="post" @submit.prevent="onSubmit">
+  <VuemixForm method="post">
     <label>
       Text: <input name="text" value="test" /><br />
       ActionData Text: {{ text }}<br />
     </label>
     <button type="submit">Submit</button>
-  </form>
+  </VuemixForm>
 </template>
 
 <script>
@@ -20,6 +20,7 @@ import {
   useActionData,
   useLoaderData,
   useVuemixCtx,
+  VuemixForm,
 } from '../../vuemix/index.mjs';
 
 export async function loader() {
@@ -42,6 +43,9 @@ export async function action({ formData }) {
 
 export default {
   name: 'IndexView',
+  components: {
+    VuemixForm,
+  },
   setup() {
     const vuemixCtx = useVuemixCtx();
     const loaderData = useLoaderData();
