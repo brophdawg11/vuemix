@@ -1,5 +1,17 @@
 import { computed, h, inject, provide } from 'vue';
 
+export function useVuemixCtx() {
+  return inject('vuemixCtx');
+}
+
+export function useActionData() {
+  return inject('actionData');
+}
+
+export function useLoaderData() {
+  return inject('loaderData');
+}
+
 export const VuemixRoute = {
   name: 'VuemixRoute',
   props: {
@@ -56,15 +68,3 @@ export const VuemixForm = {
     return () => h('form', formProps, slots.default());
   },
 };
-
-export function useVuemixCtx() {
-  return inject('vuemixCtx');
-}
-
-export function useActionData() {
-  return inject('actionData');
-}
-
-export function useLoaderData() {
-  return inject('loaderData');
-}
