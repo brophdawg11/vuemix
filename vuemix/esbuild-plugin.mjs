@@ -145,8 +145,8 @@ export default function vuemixPlugin({ type }) {
     name: 'route-definition',
     setup(build) {
       const filesPromise = readRoutesDirectory();
-      defineServerRouteManifestVirtualModule(build, filesPromise, type);
-      defineRouteDefinitionVirtualModule(build, filesPromise);
+      defineServerRouteManifestVirtualModule(build, filesPromise);
+      defineRouteDefinitionVirtualModule(build, filesPromise, type);
       defineClientRouteVirtualModule(build, filesPromise);
     },
   };
