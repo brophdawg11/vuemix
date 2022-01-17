@@ -5,7 +5,7 @@ import { build } from 'esbuild';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import pluginVue from 'esbuild-plugin-vue-next';
 
-import { routeDefinitionPlugin } from './route-plugins.mjs';
+import vuemixPlugin from './esbuild-plugin.mjs';
 
 async function buildServer() {
   const result = await build({
@@ -19,7 +19,7 @@ async function buildServer() {
     target: 'node16',
     format: 'esm',
     outfile: 'dist/server/app.mjs',
-    plugins: [routeDefinitionPlugin({ type: 'server' }), pluginVue()],
+    plugins: [vuemixPlugin({ type: 'server' }), pluginVue()],
   });
 
   fs.writeFileSync(

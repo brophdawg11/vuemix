@@ -5,7 +5,7 @@ import { build } from 'esbuild';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import pluginVue from 'esbuild-plugin-vue-next';
 
-import { routeDefinitionPlugin } from './route-plugins.mjs';
+import vuemixPlugin from './esbuild-plugin.mjs';
 
 async function buildClient() {
   const result = await build({
@@ -20,7 +20,7 @@ async function buildClient() {
     splitting: true,
     target: 'es2020',
     outdir: 'dist/client',
-    plugins: [routeDefinitionPlugin({ type: 'client' }), pluginVue()],
+    plugins: [vuemixPlugin({ type: 'client' }), pluginVue()],
   });
 
   fs.writeFileSync(
