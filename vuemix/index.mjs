@@ -1,4 +1,5 @@
 import { computed, h, inject, provide } from 'vue';
+import { useRouter } from 'vue-router';
 
 export function useVuemixCtx() {
   return inject('vuemixCtx');
@@ -44,6 +45,7 @@ export const VuemixForm = {
   },
   setup(props, { attrs, slots }) {
     const vuemixCtx = useVuemixCtx();
+    const router = useRouter();
 
     const onSubmit = async (e) => {
       e.preventDefault();
@@ -57,6 +59,12 @@ export const VuemixForm = {
         },
         body: new URLSearchParams(formData),
       });
+
+      const { headers } = res;
+      if (headers.get('x-vuemix-redirect')) {
+        router.push(headers.get('x-vuemix-location'));
+        return;
+      }
       const data = await res.json();
       vuemixCtx.actionData = data;
     };

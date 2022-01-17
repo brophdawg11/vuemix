@@ -20,7 +20,19 @@ async function buildClient() {
     splitting: true,
     target: 'es2020',
     outdir: 'dist/client',
-    plugins: [vuemixPlugin({ type: 'client' }), pluginVue()],
+    plugins: [
+      // TODO: Hack?  node-fetch seems to still be processed by esbuild even though
+      // it's downstream of an action.  This marks internal node built-in dependencies
+      // it references as external so the build doesn't fail
+      {
+        name: 'client-node-external',
+        setup(b) {
+          b.onResolve({ filter: /^node:/ }, () => ({ external: true }));
+        },
+      },
+      vuemixPlugin({ type: 'client' }),
+      pluginVue(),
+    ],
   });
 
   fs.writeFileSync(

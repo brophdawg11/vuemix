@@ -7,6 +7,7 @@ import {
   routeManifest,
   serverCreateApp,
 } from '../dist/server/app.mjs';
+import { Response } from '../vuemix/response.mjs';
 
 const server = express();
 
@@ -29,6 +30,23 @@ const clientRouteManifest = Object.entries(routeManifest).reduce(
     }),
   {},
 );
+
+function sendFetchResponse(fetchResponse, expressResponse, isSpaCall = false) {
+  const isRedirect = [301, 302, 307].includes(fetchResponse.status);
+  const { headers } = fetchResponse;
+  if (isRedirect && isSpaCall) {
+    // SPA calls return a 200 with custom headers indicating the redirect
+    expressResponse.status(200);
+    expressResponse.set('x-vuemix-redirect', fetchResponse.status);
+    expressResponse.set('x-vuemix-location', headers.get('location'));
+    headers.delete('location');
+  } else {
+    expressResponse.status(fetchResponse.status);
+  }
+  headers.forEach((v, k) => expressResponse.set(k, v));
+  expressResponse.send(fetchResponse.body);
+}
+
 server.all('*', async (req, res, next) => {
   try {
     const activeRoute = Object.values(routeManifest).find(
@@ -45,7 +63,6 @@ server.all('*', async (req, res, next) => {
       loaderData: {},
     };
 
-    // TODO: Any need to support beyond this?
     if (!['GET', 'POST'].includes(req.method)) {
       res.status(405).send('Unsupported method');
       return;
@@ -58,10 +75,33 @@ server.all('*', async (req, res, next) => {
         return;
       }
 
-      context.actionData = await activeRoute.action({ formData: req.body });
-      if (req.query._action) {
-        res.send(context.actionData);
-        return;
+      try {
+        const isSpaCall = req.query._action != null;
+        const actionResult = await activeRoute.action({ formData: req.body });
+        if (actionResult instanceof Response) {
+          sendFetchResponse(actionResult, res, isSpaCall);
+          return;
+        }
+
+        if (isSpaCall) {
+          res.send(actionResult);
+          return;
+        }
+
+        context.actionData = actionResult;
+      } catch (e) {
+        // Propagate errors upwards
+        if (e instanceof Error) {
+          throw e;
+        }
+
+        // Propagate thrown responses back
+        if (e instanceof Response) {
+          sendFetchResponse(e, res, req.query._action != null);
+          return;
+        }
+
+        throw new Error('Unsupported thrown value from action');
       }
     }
 

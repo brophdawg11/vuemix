@@ -4,7 +4,8 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/page">Page</router-link> |
       <router-link to="/nested">Nested Index</router-link> |
-      <router-link to="/nested/page">Nested Page</router-link>
+      <router-link to="/nested/page">Nested Page</router-link> |
+      <router-link to="/todos">Todos</router-link>
     </header>
     <router-view :key="$route.path" />
     <footer>Footer</footer>
