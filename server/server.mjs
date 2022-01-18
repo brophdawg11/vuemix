@@ -48,14 +48,26 @@ function sendFetchResponse(fetchResponse, expressResponse, isSpaCall = false) {
 }
 
 server.all('*', async (req, res, next) => {
+  function getAncestorRoutes(route) {
+    if (!route.parent) {
+      return [route];
+    }
+    const parent = routeManifest[route.parent];
+    return [route, ...getAncestorRoutes(parent)];
+  }
+
   try {
+    // Search from back to front to find the deepest match
     const activeRoute = Object.values(routeManifest).find(
       (r) => r.path === req.path,
     );
+
     if (!activeRoute) {
       res.status(404).send(`Not Found: ${req.url}`);
       return;
     }
+
+    const activeRoutes = getAncestorRoutes(activeRoute);
 
     const context = {
       url: req.url,
@@ -70,14 +82,15 @@ server.all('*', async (req, res, next) => {
 
     // Handle action
     if (req.method === 'POST') {
-      if (!activeRoute.action) {
+      const action = activeRoutes.find((a) => a.action);
+      if (!action) {
         res.status(500).send('No action provided');
         return;
       }
 
       try {
         const isSpaCall = req.query._action != null;
-        const actionResult = await activeRoute.action({ formData: req.body });
+        const actionResult = await action({ formData: req.body });
         if (actionResult instanceof Response) {
           sendFetchResponse(actionResult, res, isSpaCall);
           return;
@@ -106,12 +119,17 @@ server.all('*', async (req, res, next) => {
     }
 
     // Handle loaders
-    context.loaderData[activeRoute.id] = await (activeRoute.loader
-      ? activeRoute.loader()
-      : Promise.resolve(null));
+    const results = await Promise.all(
+      activeRoutes.map((a) => (a.loader ? a.loader() : Promise.resolve(null))),
+    );
+    results.forEach((data, i) =>
+      Object.assign(context.loaderData, {
+        [activeRoutes[i].id]: data,
+      }),
+    );
 
     if (req.query._data) {
-      res.send(context.loaderData[activeRoute.id]);
+      res.send(context.loaderData);
       return;
     }
 

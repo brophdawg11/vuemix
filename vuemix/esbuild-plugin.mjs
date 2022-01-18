@@ -4,6 +4,8 @@ import fs from 'fs';
 const dirname = new URL('.', import.meta.url).pathname;
 const routeDir = path.join(dirname, '../app/routes');
 
+const generateRelativePath = (d, f) => (d ? path.join(d, f) : f);
+
 // Recursivly read the routes/ directory and generate a flat array of files
 async function readRoutesDirectory(dir) {
   const files = [];
@@ -14,14 +16,26 @@ async function readRoutesDirectory(dir) {
     // TODO: Optimize
     // eslint-disable-next-line no-await-in-loop
     const stats = await fs.promises.stat(entryPath);
-    const relativePath = dir ? path.join(dir, dirContents[i]) : dirContents[i];
-    if (!stats.isDirectory()) {
-      files.push(relativePath);
-    } else {
+    const relativePath = generateRelativePath(dir, dirContents[i]);
+    if (stats.isDirectory()) {
+      const parent =
+        dirContents[i] === path.basename(dirContents[i + 1], '.vue')
+          ? generateRelativePath(dir, dirContents[i + 1])
+          : null;
       // TODO: Optimize
       // eslint-disable-next-line no-await-in-loop
       const nested = await readRoutesDirectory(relativePath);
-      files.push(...nested);
+      files.push(
+        ...nested.map((n) => ({
+          ...n,
+          ...(parent ? { parent } : {}),
+        })),
+      );
+    } else {
+      const layout =
+        dirContents[i - 1] &&
+        dirContents[i - 1] === path.basename(dirContents[i], '.vue');
+      files.push({ path: relativePath, ...(layout ? { layout } : {}) });
     }
   }
   return files;
@@ -50,14 +64,16 @@ function defineServerRouteManifestVirtualModule(build, filesPromise) {
   build.onLoad({ filter: /.*/, namespace: 'route-manifest' }, async () => {
     const files = await filesPromise;
     const contents = `
-${files.map((f, i) => `import * as m_${i} from './${f}';`).join('\n')}
+${files.map((f, i) => `import * as m_${i} from './${f.path}';`).join('\n')}
 
 export default {
   ${files
     .map(
-      (f, i) => `'${f}': {
-    id: '${f}',
-    path: '${getPathFromFileName(f)}',
+      (f, i) => `'${f.path}': {
+    id: '${f.path}',
+    path: '${getPathFromFileName(f.path)}',
+    parent: ${f.parent ? `'${f.parent}'` : 'null'},
+    layout: ${f.layout === true},
     action: typeof m_${i}.action === 'undefined' ? null : m_${i}.action,
     loader: typeof m_${i}.loader === 'undefined' ? null : m_${i}.loader,
   }`,
@@ -87,27 +103,41 @@ function defineRouteDefinitionVirtualModule(build, filesPromise, type) {
 
   build.onLoad({ filter: /.*/, namespace: 'route-definition' }, async () => {
     const files = await filesPromise;
-    const getImport = (f) => f + (type === 'client' ? '?client' : '');
+    const getImport = type === 'client' ? (p) => `${p}?client` : (p) => p;
+
+    const getChildRoutes = (f) => {
+      const children = files.filter((c) => c.parent === f.path);
+      if (!children.length) {
+        return '';
+      }
+      /* eslint-disable no-use-before-define */
+      return `
+  children: [${children.map((c) => getRoute(c))}],`;
+      /* eslint-enable no-use-before-define */
+    };
+
+    const getRoute = (f) => `
+{
+  id: '${f.path}',
+  path: '${getPathFromFileName(f.path)}',
+  component: async () => {
+    const cmp = (await import('./${getImport(f.path)}')).default;
+    return {
+      name: 'RouteWrapper',
+      render: () => h(VuemixRoute, { id: '${f.path}' }, () => h(cmp)),
+    };
+  },${getChildRoutes(f)}
+}`;
+
     const contents = `
 import { h } from 'vue';
 
 import { VuemixRoute } from '../../vuemix/index.mjs';
 
-export default [
-  ${files.map(
-    (f) => `{
-      id: '${f}',
-      path: '${getPathFromFileName(f)}',
-      component: async () => {
-        const cmp = (await import('./${getImport(f)}')).default;
-        return {
-          name: 'RouteWrapper',
-          render: () => h(VuemixRoute, { id: '${f}' }, () => h(cmp)),
-        };
-      },
-    }`,
-  )}
-];
+export default [${files
+      .filter((f) => !f.parent)
+      .map(getRoute)
+      .join(',')}];
 `;
     return {
       resolveDir: routeDir,
