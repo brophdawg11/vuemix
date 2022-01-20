@@ -82,7 +82,7 @@ server.all('*', async (req, res, next) => {
 
     // Handle action
     if (req.method === 'POST') {
-      const action = activeRoutes.find((a) => a.action);
+      const action = activeRoutes.find((a) => a.action)?.action;
       if (!action) {
         res.status(500).send('No action provided');
         return;
