@@ -118,13 +118,18 @@ server.all('*', async (req, res, next) => {
       }
     }
 
-    // Handle loaders
+    // Handle loaders, only run the requested loaders if this is a _data request
+    // from the client, otherwise run all active loaders for full SSR routes
+    const loaderRoutes = req.query._data
+      ? req.query._data.split(',').map((id) => routeManifest[id])
+      : activeRoutes;
+
     const results = await Promise.all(
-      activeRoutes.map((a) => (a.loader ? a.loader() : Promise.resolve(null))),
+      loaderRoutes.map((a) => (a.loader ? a.loader() : Promise.resolve(null))),
     );
     results.forEach((data, i) =>
       Object.assign(context.loaderData, {
-        [activeRoutes[i].id]: data,
+        [loaderRoutes[i].id]: data,
       }),
     );
 
