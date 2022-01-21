@@ -1,6 +1,6 @@
 # vuemix
 
-A simple POC of a remix-like framework for Vue 3
+A simple POC of a [Remix](https://remix.run)-like framework for Vue 3
 
 ## Usage
 
