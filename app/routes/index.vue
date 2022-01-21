@@ -14,7 +14,8 @@
     <li>useTransition/useFetcher</li>
     <li>
       "Smart" JS loading and/or prefetching. Route-level code-splitting is
-      included, but it does a waterfall import from entryclint on initial load.
+      included, but it does a waterfall import from entry-client on initial
+      load.
     </li>
     <li>Edge-native hotness - Vuemix is tightly-coupled to Express</li>
     <li>
