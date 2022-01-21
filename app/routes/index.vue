@@ -10,6 +10,7 @@
   <p>A few features that are not yet supported:</p>
   <ul>
     <li>Parameterized routes</li>
+    <li>Error/Catch boundaries</li>
     <li>
       "Smart" JS loading and/or prefetching. Route-level code-splitting is
       included, but it does a waterfall import from entryclint on initial load.
