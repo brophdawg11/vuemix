@@ -22,22 +22,12 @@
     "build:server": "node vuemix/build-server.mjs",
     "build": "concurrently npm:build:*",
     "clean": "rm -rf dist/",
-    "dev": "npm run clean && npm run build",
+    "dev": "npm run clean && WATCH=true npm run build",
+    "dev:serve": "nodemon server/server.mjs",
     "lint": "eslint --ext .js,.mjs,.vue .",
     "start": "node server/server.mjs",
     "start:debug": "node --inspect-brk server/server.mjs",
-    "watch": "npx npm-watch",
     "prepare": "husky install"
-  },
-  "watch": {
-    "dev": [
-      "app/**/*.*",
-      "vuemix/**/*.*"
-    ],
-    "start": [
-      "server/**/*.*",
-      "dist/server/**/*.*"
-    ]
   },
   "devDependencies": {
     "concurrently": "7.0.0",
@@ -48,7 +38,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-vue": "8.3.0",
     "husky": "7.0.4",
-    "npm-watch": "0.11.0",
+    "nodemon": "2.0.15",
     "prettier": "2.5.1"
   },
   "dependencies": {

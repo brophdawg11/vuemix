@@ -30,6 +30,7 @@ async function buildServer() {
       vuemixPlugin({ type: 'server' }),
       pluginVue(),
     ],
+    watch: process.env.WATCH === 'true',
   });
 
   fs.writeFileSync(

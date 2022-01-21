@@ -33,6 +33,7 @@ async function buildClient() {
       vuemixPlugin({ type: 'client' }),
       pluginVue(),
     ],
+    watch: process.env.WATCH === 'true',
   });
 
   fs.writeFileSync(
