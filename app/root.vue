@@ -1,18 +1,18 @@
 <template>
   <div>
     <header>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/page">Page</router-link> |
-      <router-link to="/nested">Nested Index</router-link> |
-      <router-link to="/nested/page">Nested Page</router-link> |
-      <router-link to="/todos">Todos</router-link>
+      <nav>
+        <router-link to="/">Home</router-link> |
+        <router-link to="/todos">Todos</router-link>
+      </nav>
     </header>
     <router-view :key="$route.path" />
-    <footer>Footer</footer>
   </div>
 </template>
 
 <script>
+import './app.css';
+
 export default {
   name: 'AppRoot',
 };

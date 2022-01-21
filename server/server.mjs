@@ -147,6 +147,7 @@ server.all('*', async (req, res, next) => {
 <html>
    <head>
        <title>Vuemix</title>
+       <link rel="stylesheet" href="/entry-client.css" />
    </head>
    <body>
        <div id="app">${html}</div>

@@ -1,26 +1,23 @@
 <template>
-  <h1>New Todo</h1>
-  <p>{{ message }}</p>
-  <VuemixForm method="post">
-    <label>
-      Todo:
+  <div class="todos-new">
+    <h3>Add a Todo</h3>
+    <VuemixForm method="post">
       <input name="todo" />
-    </label>
-    <button type="submit">Add</button>
-  </VuemixForm>
-  <router-link to="/todos">Cancel</router-link>
+      <button type="submit">Add</button>
+    </VuemixForm>
+    <router-link to="/todos">Cancel</router-link>
+    <p>
+      <br />
+      Note that this form redirects back to the updated todo list on submissison
+      - without or without JS enabled!
+    </p>
+  </div>
 </template>
 
 <script>
 import { redirect } from '../../../vuemix/response.mjs';
-import { VuemixForm, useLoaderData } from '../../../vuemix/index.mjs';
+import { VuemixForm } from '../../../vuemix/index.mjs';
 import { addTodo } from '../../todos.mjs';
-
-export function loader() {
-  return {
-    message: `Hello from todos/new! ${Math.round(Math.random() * 100)}`,
-  };
-}
 
 export function action({ formData }) {
   const { todo } = formData;
@@ -32,12 +29,6 @@ export default {
   name: 'NewTodoView',
   components: {
     VuemixForm,
-  },
-  setup() {
-    const data = useLoaderData();
-    return {
-      message: data.message,
-    };
   },
 };
 </script>

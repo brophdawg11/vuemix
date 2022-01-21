@@ -1,16 +1,52 @@
 <template>
-  <h1>Hello Vuemix</h1>
-  <p :style="{ color: isMounted ? 'red' : 'black' }">
-    {{ isMounted ? 'Mounted!' : 'Mounting...' }}
+  <h1>Welcome to Vuemix!</h1>
+  <p>
+    Vuemix is a <i>super</i> simple POC of a
+    <a href="https://remix.run" target="_blank">Remix</a> approach using Vue.
+    It's got a tiny fraction of the features but aims to proof out the main
+    flows of loaders, actions, nested-routes, and progressive enhancement.
+  </p>
+
+  <p>A few features that are not yet supported:</p>
+  <ul>
+    <li>Parameterized routes</li>
+    <li>
+      "Smart" JS loading and/or prefetching. Route-level code-splitting is
+      included, but it does a waterfall import from entryclint on initial load.
+    </li>
+    <li>Edge-native hotness - Vuemix is tightly-coupled to Express</li>
+    <li>
+      Link/Meta tags handling or the ability to control the full &lt;html&gt;
+      document via Vue
+    </li>
+    <li>Plenty of other <i>awesome</i> features that Remix proivides.</li>
+  </ul>
+
+  <h2>Loaders</h2>
+  <p>
+    It supports loaders and hydration of the loader data to the client. In this
+    case, the initial random number is returned from our server-side loader:
   </p>
   <button @click="count++">Increment {{ count }}</button>
-  <VuemixForm method="post">
-    <label>
-      Text: <input name="text" value="test" /><br />
-      ActionData Text: {{ text }}<br />
-    </label>
-    <button type="submit">Submit</button>
-  </VuemixForm>
+
+  <h2>Actions</h2>
+  <p>
+    It supports form submissions (with and without JS) using actions. In this
+    case our server-side action will append a random number to your input:
+    <VuemixForm method="post">
+      <input name="text" value="test" />
+      <button type="submit">Submit</button>
+      <br />
+      Action Data Text: {{ text }}
+    </VuemixForm>
+  </p>
+
+  <h2>Nested Routes</h2>
+  <p>
+    Be sure to check out the
+    <router-link to="/todos">Todos</router-link> section for an example of
+    nested routes!
+  </p>
 </template>
 
 <script>
@@ -25,19 +61,19 @@ import {
 
 export async function loader() {
   await new Promise((r) => {
-    setTimeout(r, 200);
+    setTimeout(r, 100);
   });
   return {
-    count: 10,
+    count: Math.round(Math.random() * 100),
   };
 }
 
 export async function action({ formData }) {
   await new Promise((r) => {
-    setTimeout(r, 200);
+    setTimeout(r, 100);
   });
   return {
-    text: `${formData.text}-appended`,
+    text: `${formData.text}-${Math.round(Math.random() * 100)}`,
   };
 }
 
