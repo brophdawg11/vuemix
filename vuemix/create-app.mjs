@@ -4,7 +4,7 @@ import { createRouter } from 'vue-router';
 // eslint-disable-next-line import/no-unresolved
 import routes from 'vuemix:route-definition';
 
-import RootView from './root.vue';
+import RootView from '../app/root.vue';
 
 export default function createVuemixApp(createApp, history, vuemixCtx) {
   const app = createApp({

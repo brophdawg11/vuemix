@@ -9,7 +9,7 @@ import vuemixPlugin from './esbuild-plugin.mjs';
 
 async function buildServer() {
   const result = await build({
-    entryPoints: ['app/entry-server.mjs'],
+    entryPoints: ['vuemix/entry-server.mjs'],
     bundle: true,
     define: {
       __VUE_OPTIONS_API__: false,

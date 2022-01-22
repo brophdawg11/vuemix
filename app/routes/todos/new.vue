@@ -23,9 +23,12 @@ import { redirect } from '../../../vuemix/response.mjs';
 import { VuemixForm, useTransition } from '../../../vuemix/index.mjs';
 import { addTodo } from '../../todos.mjs';
 
-export function action({ formData }) {
+export async function action({ formData }) {
   const { todo } = formData;
   addTodo(todo);
+  await new Promise((r) => {
+    setTimeout(r, 100);
+  });
   throw redirect('/todos');
 }
 

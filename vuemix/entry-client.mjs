@@ -1,11 +1,7 @@
 import { createApp, reactive } from 'vue';
 import { createWebHistory } from 'vue-router';
 
-import {
-  getLeafRoute,
-  getAncestorRoutes,
-  fetchLoaderData,
-} from '../vuemix/index.mjs';
+import { getLeafRoute, getAncestorRoutes, fetchLoaderData } from './index.mjs';
 import createVuemixApp from './create-app.mjs';
 
 const vuemixCtx = reactive({

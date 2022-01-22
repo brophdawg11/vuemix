@@ -37,7 +37,7 @@
     It supports form submissions (with and without JS) using actions. In this
     case our server-side action will append a random number to your input:
     <VuemixForm method="post">
-      <input name="text" value="test" />
+      <input name="text" />
       <button type="submit" :disabled="isSubmitting">
         {{ isSubmitting ? 'Submitting...' : 'Submit' }}
       </button>
