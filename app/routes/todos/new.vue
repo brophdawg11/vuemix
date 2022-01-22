@@ -3,7 +3,9 @@
     <h3>Add a Todo</h3>
     <VuemixForm method="post">
       <input name="todo" />
-      <button type="submit">Add</button>
+      <button type="submit" :disabled="isAdding">
+        {{ isAdding ? 'Adding...' : 'Add' }}
+      </button>
     </VuemixForm>
     <router-link to="/todos">Cancel</router-link>
     <p>
@@ -15,8 +17,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { redirect } from '../../../vuemix/response.mjs';
-import { VuemixForm } from '../../../vuemix/index.mjs';
+import { VuemixForm, useTransition } from '../../../vuemix/index.mjs';
 import { addTodo } from '../../todos.mjs';
 
 export function action({ formData }) {
@@ -29,6 +33,12 @@ export default {
   name: 'NewTodoView',
   components: {
     VuemixForm,
+  },
+  setup() {
+    const transition = useTransition();
+    return {
+      isAdding: computed(() => transition.value?.submission != null),
+    };
   },
 };
 </script>

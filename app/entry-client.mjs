@@ -1,11 +1,18 @@
 import { createApp, reactive } from 'vue';
 import { createWebHistory } from 'vue-router';
 
+import {
+  getLeafRoute,
+  getAncestorRoutes,
+  fetchLoaderData,
+} from '../vuemix/index.mjs';
 import createVuemixApp from './create-app.mjs';
 
 const vuemixCtx = reactive({
+  routeManifest: window.__vuemix.routeManifest,
   actionData: window.__vuemix.actionData,
   loaderData: window.__vuemix.loaderData,
+  transition: { state: 'idle' },
 });
 
 const { app, router } = createVuemixApp(
@@ -19,29 +26,24 @@ window.__vuemix.router = router;
 window.__vuemix.ctx = vuemixCtx;
 
 function useClientSideLoaders(routerInstance, routeManifest) {
-  const routeManifestArray = Object.values(routeManifest);
-
-  // Prefer leaf routes over layout routes in dup path scenarios
-  function getLeafRoute({ path }) {
-    return (
-      routeManifestArray.find((r) => r.path === path && !r.layout) ||
-      routeManifestArray.find((r) => r.path === path)
-    );
-  }
-
-  // Return an array of the route hierarchy, ending with the provided route
-  function getAncestorRoutes(manifest, route) {
-    if (!route.parent) {
-      return [route];
-    }
-    const parent = manifest[route.parent];
-    return [route, ...getAncestorRoutes(manifest, parent)];
-  }
-
   // Execute appropriate loaders on each client side route
-  routerInstance.beforeResolve(async (to, from, next) => {
-    const toRoutes = getAncestorRoutes(routeManifest, getLeafRoute(to));
-    const fromRoutes = getAncestorRoutes(routeManifest, getLeafRoute(from));
+  routerInstance.beforeEach(async (to, from, next) => {
+    if (vuemixCtx.transition.state !== 'loading') {
+      vuemixCtx.transition = {
+        state: 'loading',
+        type: 'load',
+        location: to.path,
+      };
+    }
+
+    const toRoutes = getAncestorRoutes(
+      routeManifest,
+      getLeafRoute(routeManifest, to),
+    );
+    const fromRoutes = getAncestorRoutes(
+      routeManifest,
+      getLeafRoute(routeManifest, from),
+    );
     // Do not re-run loaders for reused ancestor routes
     const loaderRoutes = toRoutes.filter(
       ({ id, hasLoader }) => hasLoader && !fromRoutes.find((r) => r.id === id),
@@ -53,16 +55,19 @@ function useClientSideLoaders(routerInstance, routeManifest) {
     }
 
     try {
-      const qs = new URLSearchParams({
-        _data: loaderRoutes.map((r) => r.id).join(','),
-      });
-      const res = await fetch(`${to.path}?${qs}`);
-      const loaderData = await res.json();
+      // TODO - this runs sequentially before async route chunk loads - make it
+      // run in parallel by awaiting the promise in beforeResolve
+      const loaderData = await fetchLoaderData(to.path, loaderRoutes);
       Object.assign(vuemixCtx.loaderData, loaderData);
       next();
     } catch (e) {
+      vuemixCtx.transition = { state: 'idle' };
       next(e);
     }
+  });
+
+  routerInstance.afterEach(() => {
+    vuemixCtx.transition = { state: 'idle' };
   });
 }
 

@@ -1,4 +1,4 @@
-import { h, provide } from 'vue';
+import { h, computed, provide } from 'vue';
 import { createRouter } from 'vue-router';
 
 // eslint-disable-next-line import/no-unresolved
@@ -10,6 +10,10 @@ export default function createVuemixApp(createApp, history, vuemixCtx) {
   const app = createApp({
     setup() {
       provide('vuemixCtx', vuemixCtx);
+      provide(
+        'transition',
+        computed(() => vuemixCtx.transition),
+      );
       return () => h(RootView);
     },
   });

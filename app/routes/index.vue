@@ -38,9 +38,11 @@
     case our server-side action will append a random number to your input:
     <VuemixForm method="post">
       <input name="text" value="test" />
-      <button type="submit">Submit</button>
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+      </button>
       <br />
-      Action Data Text: {{ text }}
+      Submitted text: {{ submittedText }}
     </VuemixForm>
   </p>
 
@@ -58,6 +60,7 @@ import { computed, ref } from 'vue';
 import {
   useActionData,
   useLoaderData,
+  useTransition,
   VuemixForm,
 } from '../../vuemix/index.mjs';
 
@@ -87,13 +90,16 @@ export default {
   setup() {
     const loaderData = useLoaderData();
     const actionData = useActionData();
-
+    const transition = useTransition();
     const count = ref(loaderData.value?.count);
-    const text = computed(() => actionData.value?.text);
+    const isSubmitting = computed(() => transition.value.submission != null);
+    const submittedText = computed(() => actionData.value?.text);
 
     return {
       count,
-      text,
+      isSubmitting,
+      submittedText,
+      transition,
     };
   },
 };
