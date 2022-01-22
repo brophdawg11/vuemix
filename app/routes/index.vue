@@ -4,14 +4,15 @@
     Vuemix is a <i>super</i> simple POC of a
     <a href="https://remix.run" target="_blank">Remix</a> approach using Vue.
     It's got a tiny fraction of the features but aims to proof out the main
-    flows of loaders, actions, nested-routes, and progressive enhancement.
+    flows of loaders, actions, nested-routes, transitions, and progressive
+    enhancement.
   </p>
 
   <p>A few features that are not yet supported:</p>
   <ul>
     <li>Parameterized routes</li>
     <li>Error/Catch boundaries</li>
-    <li>useTransition/useFetcher</li>
+    <li>useFetcher</li>
     <li>
       "Smart" JS loading and/or prefetching. Route-level code-splitting is
       included, but it does a waterfall import from entry-client on initial
