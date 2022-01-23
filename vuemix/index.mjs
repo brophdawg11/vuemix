@@ -1,4 +1,4 @@
-import { computed, h, inject, provide } from 'vue';
+import { computed, h, inject, provide, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export function useVuemixCtx() {
@@ -15,6 +15,13 @@ export function useLoaderData() {
 
 export function useTransition() {
   return inject('transition');
+}
+
+// Append the given queryParams to the url.  Params can be an object of FormData
+function appendQueryParams(url, params) {
+  const qs = new URLSearchParams(params);
+  const sep = url.indexOf('?') >= 0 ? '&' : '?';
+  return `${url}${sep}${qs}`;
 }
 
 // Prefer leaf routes over layout routes in dup path scenarios
@@ -39,10 +46,10 @@ export function getAncestorRoutes(routeManifest, route) {
 // Fetch load data for the given route manifest entries
 export async function fetchLoaderData(url, routeOrRoutes) {
   const routes = Array.isArray(routeOrRoutes) ? routeOrRoutes : [routeOrRoutes];
-  const qs = new URLSearchParams({
+  const fullUrl = appendQueryParams(url, {
     _data: routes.map((r) => r.id).join(','),
   });
-  const res = await fetch(`${url}?${qs}`);
+  const res = await fetch(fullUrl);
   const loaderData = await res.json();
   return loaderData;
 }
@@ -80,13 +87,31 @@ export const VuemixForm = {
   setup(props, { attrs, slots }) {
     const vuemixCtx = useVuemixCtx();
     const router = useRouter();
+    const el = ref();
 
     const onSubmit = async (e) => {
       e.preventDefault();
 
+      const method = (attrs.method || 'post').toLowerCase();
       const url = attrs.action || window.location.pathname;
       const activeRoute = getLeafRoute(vuemixCtx.routeManifest, url);
-      const formData = new FormData(document.getElementsByTagName('form')[0]);
+      const formData = new FormData(el.value);
+
+      if (method === 'get') {
+        vuemixCtx.transition = {
+          state: 'submitting',
+          type: 'loaderSubmission',
+          submission: formData,
+          location: url,
+        };
+        const fullUrl = appendQueryParams(url, formData);
+        router.push(fullUrl);
+        return;
+      }
+
+      if (method !== 'post') {
+        throw new Error('Non-get/post methods are not supported by VuemixForm');
+      }
 
       vuemixCtx.transition = {
         state: 'submitting',
@@ -94,8 +119,11 @@ export const VuemixForm = {
         submission: formData,
         location: url,
       };
-      const res = await fetch(`${url}?_action`, {
-        method: 'post',
+      const qs = new URLSearchParams({
+        _action: activeRoute.id,
+      });
+      const res = await fetch(`${url}?${qs}`, {
+        method,
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
         },
@@ -108,8 +136,7 @@ export const VuemixForm = {
           state: 'loading',
           type: 'actionRedirect',
         });
-        await router.push(headers.get('x-vuemix-location'));
-        vuemixCtx.transition = { state: 'idle' };
+        router.push(headers.get('x-vuemix-location'));
         return;
       }
 
@@ -128,6 +155,7 @@ export const VuemixForm = {
     };
 
     const formProps = {
+      ref: el,
       ...attrs,
       ...(!props.reloadDocument ? { onSubmit } : {}),
     };

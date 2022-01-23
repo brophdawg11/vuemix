@@ -22,27 +22,22 @@ window.__vuemix.router = router;
 window.__vuemix.ctx = vuemixCtx;
 
 function useClientSideLoaders(routerInstance, routeManifest) {
-  // Execute appropriate loaders on each client side route
-  routerInstance.beforeEach(async (to, from, next) => {
-    if (vuemixCtx.transition.state !== 'loading') {
-      vuemixCtx.transition = {
-        state: 'loading',
-        type: 'load',
-        location: to.path,
-      };
-    }
+  let loaderPromise;
 
-    const toRoutes = getAncestorRoutes(
-      routeManifest,
-      getLeafRoute(routeManifest, to),
-    );
+  // Start loader fetches in parallel with async chunk loads
+  routerInstance.beforeEach(async (to, from, next) => {
+    const toLeafRoute = getLeafRoute(routeManifest, to);
+    const toRoutes = getAncestorRoutes(routeManifest, toLeafRoute);
     const fromRoutes = getAncestorRoutes(
       routeManifest,
       getLeafRoute(routeManifest, from),
     );
-    // Do not re-run loaders for reused ancestor routes
+    // Do not re-run loaders for reused ancestor routes, but always ensure we run
+    // the loader for the destinaiton leaf route since we may have query param changes
     const loaderRoutes = toRoutes.filter(
-      ({ id, hasLoader }) => hasLoader && !fromRoutes.find((r) => r.id === id),
+      ({ id, hasLoader }) =>
+        hasLoader &&
+        (id === toLeafRoute.id || !fromRoutes.find((r) => r.id === id)),
     );
 
     if (!loaderRoutes.length) {
@@ -50,10 +45,23 @@ function useClientSideLoaders(routerInstance, routeManifest) {
       return;
     }
 
+    // Only set transition on normal link clicks.  If this is a redirect or
+    // GET-form submission we'll have set this already
+    if (vuemixCtx.transition.state === 'idle') {
+      vuemixCtx.transition = {
+        state: 'loading',
+        type: 'load',
+        location: to.path,
+      };
+    }
+    loaderPromise = fetchLoaderData(to.fullPath, loaderRoutes);
+    next();
+  });
+
+  // Await loader fetches prior to approving route transition
+  routerInstance.beforeResolve(async (to, from, next) => {
     try {
-      // TODO - this runs sequentially before async route chunk loads - make it
-      // run in parallel by awaiting the promise in beforeResolve
-      const loaderData = await fetchLoaderData(to.path, loaderRoutes);
+      const loaderData = await loaderPromise;
       Object.assign(vuemixCtx.loaderData, loaderData);
       next();
     } catch (e) {
@@ -62,8 +70,13 @@ function useClientSideLoaders(routerInstance, routeManifest) {
     }
   });
 
+  // Complete route transition
   routerInstance.afterEach(() => {
     vuemixCtx.transition = { state: 'idle' };
+  });
+
+  router.onError(() => {
+    loaderPromise = null;
   });
 }
 

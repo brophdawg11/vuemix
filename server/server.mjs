@@ -124,8 +124,11 @@ server.all('*', async (req, res, next) => {
       ? req.query._data.split(',').map((id) => routeManifest[id])
       : activeRoutes;
 
+    // TODO: Convert to Fetch Request
     const results = await Promise.all(
-      loaderRoutes.map((a) => (a.loader ? a.loader() : Promise.resolve(null))),
+      loaderRoutes.map((a) =>
+        a.loader ? a.loader({ request: req }) : Promise.resolve(null),
+      ),
     );
     results.forEach((data, i) =>
       Object.assign(context.loaderData, {

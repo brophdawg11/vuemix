@@ -8,7 +8,8 @@
     <ul>
       <li v-for="todo in todos" :key="todo">{{ todo }}</li>
     </ul>
-    <router-link to="/todos/new">Add a New Todo</router-link>
+    <router-link to="/todos/new">Add a New Todo</router-link> |
+    <router-link to="/todos/search">Search</router-link>
     <p>
       <br />
       Take note when navigating to and from the /todos/new route that we do not
