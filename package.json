@@ -24,6 +24,9 @@
     "clean": "rm -rf dist/",
     "dev": "npm run clean && WATCH=true npm run build",
     "dev:serve": "nodemon server/server.mjs",
+    "test:setup": "npm run build && npm run start",
+    "test:e2e": "cypress run",
+    "test:precommit": "start-server-and-test test:setup http-get://localhost:8080 test:e2e",
     "lint": "eslint --ext .js,.mjs,.vue .",
     "start": "node server/server.mjs",
     "start:debug": "node --inspect-brk server/server.mjs",
@@ -31,15 +34,18 @@
   },
   "devDependencies": {
     "concurrently": "7.0.0",
+    "cypress": "9.3.1",
     "esbuild": "0.14.11",
     "esbuild-plugin-vue-next": "0.1.2",
     "eslint": "8.7.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-cypress": "2.12.1",
     "eslint-plugin-vue": "8.3.0",
     "husky": "7.0.4",
     "nodemon": "2.0.15",
-    "prettier": "2.5.1"
+    "prettier": "2.5.1",
+    "start-server-and-test": "1.14.0"
   },
   "dependencies": {
     "@vue/server-renderer": "3.2.26",

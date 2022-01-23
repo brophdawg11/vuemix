@@ -1,4 +1,4 @@
-import { h, computed, provide } from 'vue';
+import { h, createSSRApp, computed, provide } from 'vue';
 import { createRouter } from 'vue-router';
 
 // eslint-disable-next-line import/no-unresolved
@@ -6,8 +6,8 @@ import routes from 'vuemix:route-definition';
 
 import RootView from '../app/root.vue';
 
-export default function createVuemixApp(createApp, history, vuemixCtx) {
-  const app = createApp({
+export default function createVuemixApp(history, vuemixCtx) {
+  const app = createSSRApp({
     setup() {
       provide('vuemixCtx', vuemixCtx);
       provide(

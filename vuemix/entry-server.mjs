@@ -1,5 +1,4 @@
 import { renderToString } from '@vue/server-renderer';
-import { createSSRApp } from 'vue';
 import { createMemoryHistory } from 'vue-router';
 
 // eslint-disable-next-line import/no-unresolved
@@ -10,7 +9,7 @@ import createVuemixApp from './create-app.mjs';
 export const routeManifest = routes;
 
 export async function serverCreateApp(context) {
-  const { app, router } = createVuemixApp(createSSRApp, createMemoryHistory(), {
+  const { app, router } = createVuemixApp(createMemoryHistory(), {
     routeManifest,
     actionData: context.actionData,
     loaderData: context.loaderData,

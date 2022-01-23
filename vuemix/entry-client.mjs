@@ -1,4 +1,4 @@
-import { createApp, reactive } from 'vue';
+import { reactive } from 'vue';
 import { createWebHistory } from 'vue-router';
 
 import { getLeafRoute, getAncestorRoutes, fetchLoaderData } from './index.mjs';
@@ -11,11 +11,7 @@ const vuemixCtx = reactive({
   transition: { state: 'idle' },
 });
 
-const { app, router } = createVuemixApp(
-  createApp,
-  createWebHistory(),
-  vuemixCtx,
-);
+const { app, router } = createVuemixApp(createWebHistory(), vuemixCtx);
 
 window.__vuemix.app = app;
 window.__vuemix.router = router;

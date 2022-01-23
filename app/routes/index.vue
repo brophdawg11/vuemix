@@ -31,21 +31,23 @@
     It supports loaders and hydration of the loader data to the client. In this
     case, the initial random number is returned from our server-side loader:
   </p>
-  <button @click="count++">Increment {{ count }}</button>
+  <button data-testid="increment-button" @click="count++">
+    Increment {{ count }}
+  </button>
 
   <h2>Actions</h2>
   <p>
     It supports form submissions (with and without JS) using actions. In this
     case our server-side action will append a random number to your input:
-    <VuemixForm method="post">
-      <input name="text" />
-      <button type="submit" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-      </button>
-      <br />
-      Submitted text: {{ submittedText }}
-    </VuemixForm>
   </p>
+  <VuemixForm method="post">
+    <input name="text" data-testid="text-input" />
+    <button type="submit" :disabled="isSubmitting">
+      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+    </button>
+    <br />
+    Submitted text: {{ submittedText }}
+  </VuemixForm>
 
   <h2>Nested Routes</h2>
   <p>
