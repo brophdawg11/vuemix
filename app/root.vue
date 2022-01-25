@@ -21,7 +21,7 @@ export default {
   setup() {
     const transition = useTransition();
     return {
-      isLoading: computed(() => transition.value.state === 'loading'),
+      isLoading: computed(() => transition.value.state !== 'idle'),
     };
   },
 };

@@ -3,12 +3,12 @@
     <h3>Search for TODOs</h3>
     <VuemixForm method="get">
       <input name="query" />
-      <button type="submit" :disabled="isSearching">
-        {{ isSearching ? 'Searching...' : 'Search' }}
+      <button type="submit" :disabled="transition.submission">
+        {{ transition.submission ? 'Searching...' : 'Search' }}
       </button>
     </VuemixForm>
     <router-link to="/todos">Cancel</router-link>
-    <div v-if="transition.submission != null">
+    <div v-if="transition.submission">
       <i>Searching...</i>
     </div>
     <div v-else-if="data.todos.length > 0">
