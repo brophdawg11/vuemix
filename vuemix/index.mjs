@@ -97,6 +97,14 @@ export const VuemixForm = {
       const activeRoute = getLeafRoute(vuemixCtx.routeManifest, url);
       const formData = new FormData(el.value);
 
+      if (
+        e?.submitter.tagName.toLowerCase() === 'button' &&
+        e.submitter.name &&
+        e.submitter.value
+      ) {
+        formData.append(e.submitter.name, e.submitter.value);
+      }
+
       if (method === 'get') {
         vuemixCtx.transition = {
           state: 'submitting',
@@ -136,7 +144,12 @@ export const VuemixForm = {
           state: 'loading',
           type: 'actionRedirect',
         });
-        router.push(headers.get('x-vuemix-location'));
+        router.push({
+          // TODO doesn't yet handle redirecting with query params
+          path: headers.get('x-vuemix-location'),
+          // Use force in case we submitted to ourselves and need to force a reload
+          force: true,
+        });
         return;
       }
 
