@@ -1,0 +1,10 @@
+.husky/
+cypress/
+dist/
+node_modules/
+
+.prettierrc.json
+cypress.json
+Dockerfile
+fly.toml
+README.md
