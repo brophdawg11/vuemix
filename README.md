@@ -13,6 +13,8 @@ A few notable features that are not yet supported:
 - `link`/`meta` tag handling or the ability to control the full `<html>` document via Vue
 - Plenty of other awesome features that Remix proivides
 
+A live demo is available at https://vuemix.fly.dev/
+
 ## Usage
 
 ```bash
