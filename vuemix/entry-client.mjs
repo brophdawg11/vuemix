@@ -29,7 +29,7 @@ function useClientSideLoaders(routerInstance, routeManifest) {
       getLeafRoute(routeManifest, from),
     );
     // Do not re-run loaders for reused ancestor routes, but always ensure we run
-    // the loader for the destinaiton leaf route since we may have query param changes
+    // the loader for the destination leaf route since we may have query param changes
     const loaderRoutes = toRoutes.filter(
       ({ id, hasLoader }) =>
         hasLoader &&

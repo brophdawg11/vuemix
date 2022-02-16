@@ -23,7 +23,7 @@
     "build": "concurrently npm:build:*",
     "clean": "rm -rf dist/",
     "dev": "npm run clean && WATCH=true npm run build",
-    "dev:serve": "nodemon server/server.mjs",
+    "dev:serve": "nodemon --delay 1 --watch \"dist/**/*.*\" server/server.mjs",
     "test:setup": "npm run build && npm run start",
     "test:e2e": "cypress run",
     "test:precommit": "start-server-and-test test:setup http-get://localhost:8080 test:e2e",
@@ -33,10 +33,11 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@vue/compiler-sfc": "3.2.31",
     "concurrently": "7.0.0",
     "cypress": "9.3.1",
     "esbuild": "0.14.11",
-    "esbuild-plugin-vue-next": "0.1.2",
+    "esbuild-plugin-vue-next": "0.1.4",
     "eslint": "8.7.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "8.3.0",
@@ -49,6 +50,7 @@
   },
   "dependencies": {
     "@vue/server-renderer": "3.2.26",
+    "cookie-parser": "1.4.6",
     "express": "4.17.2",
     "node-fetch": "3.1.1",
     "vue": "3.2.26",
